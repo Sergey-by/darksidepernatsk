@@ -1,0 +1,13 @@
+{
+  "name": "Pernatsk_dark_side",
+  "version": "0.1.0",
+  "description": "",
+  "main": "app.js",
+  "devDependencies": {
+    "express": "3.x"
+  },
+  "author": "",
+  "license": "",
+  "dependencies": {
+  }
+}
