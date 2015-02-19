@@ -8,14 +8,15 @@ var CAVE_ARROWS = [
 {x : '+1', y : '+1'},
 {x : '-1', y : '-1'},
 ]
-
-PUZZLE_DIV = '<div class="maze">';
+PUZZLE_DIV = '<div class="maze">',
+FREE_FOR_ACTION = true;
 
 var getPuzzle = function(i){}
 
 var generateTiles = function(){
 	
 	var aimerContent = "";
+	var epicFailDiv = '<div class="epicfail-result"><img src="../img/salt-cave/cave-result-epicfail-panda.gif"><span>EPIC FAIL!!!</span></div>';
 	var TEMP = '<div @ph-style></div>';
 	for(var i=0; i < 7; i++){
 		for(var j=0; j<7; j++){
@@ -25,7 +26,7 @@ var generateTiles = function(){
 			aimerContent += STR_MAIN;
 		}
 	}
-	aimerContent += '<div class="cover" id="cave-aimer-cover" tile-number></div>';
+	aimerContent += '<div class="cover" id="cave-aimer-cover"></div><div class="cover cave-result" id="cave-aimer-cover-result"><div class="success-result"><span>SUCCESS</span></div><div class="fail-result"><span>FAIL!</span></div>' + epicFailDiv + '</div>';
 	return aimerContent;
 }
 
@@ -50,11 +51,13 @@ function disableCaveElements(){
 	$('.cave-aimer-tile').removeClass('active');
 	$('.cave-aimer-tile').removeClass('success');
 	$('.cave-aimer-tile').removeClass('fail');
+	$('.cave-aimer-tile').removeClass('epicfail');
 	$('.throw').fadeOut(200);
 }
 function enableCaveElements(){
 	console.log('Elements Enabled');
 	$('#cave-aimer-cover').fadeOut(300);
+	FREE_FOR_ACTION = true;
 }
 var throwMaul = function(){
 	var getRandomKoef = function(num){
@@ -71,11 +74,6 @@ var throwMaul = function(){
 }
 
 $(function() {
-	// var puzzleDiv = '';
-	// for(var i = 0; i < MAZE_PUZZLES.length; i++){
-	// 	puzzleDiv += getPuzzle(i);
-	// }
-	// $('.forest-builder').append();
 	$('#cave-aimer').html(generateTiles());
 	$('.cave-aimer-tile').on('click', function(){
 		$('.cave-aimer-tile').removeClass('active');
@@ -85,18 +83,6 @@ $(function() {
 	});
 	$('#cave-task-throw').on('click', function(){
 		$('.throw').fadeOut(200);
-		//throwMaul();
-		// var zlp;
-		// var l1 = 0;
-		// var l2 = 0;
-		// var r1 = 0;
-		// var r2 = 0;
-		// for(var i = 0; i < 1000000; i++){
-		// 	zlp = throwMaul();
-		// 	zlp.leftNum == 1 ? l1++ : l2++;
-		// 	zlp.rightNum == 1 ? r1++ : r2++;
-		// }
-		// console.log(l1, l2, r1, r2);
 		var newX, newY;
 		var countNewCoordinate = function(oldCoord, powerLeft, koefLeft, powerRight, koefRight){
 			return oldCoord + powerLeft*koefLeft + powerRight*koefRight; 
@@ -113,50 +99,67 @@ $(function() {
 
 		newX = countNewCoordinate(coordX, power.leftNum, tileLeftParams.x, power.rightNum, tileRightParams.x);
 		newY = countNewCoordinate(coordY, power.leftNum, tileLeftParams.y, power.rightNum, tileRightParams.y);
-		// newY = countNewCoordinate(coordY, power.leftNum, );
 
 		console.log(power);
 		console.log('oldX', coordX, 'newX', newX);
 		console.log('oldY', coordY, 'newY', newY);
-
-		$('.cave-aimer-tile#' + newX + '-' + newY  + '').addClass('success');
+		$('#cave-aimer-cover-result').fadeIn(300);
+		if(0 <= newX & newX <= 6 & 0 <= newY & newY <= 6){
+			
+			if(newX == 3 & newY ==3){
+				$('.cave-aimer-tile#3-3').addClass('success');
+				$('#cave-aimer-cover-result').addClass('success');
+			}else{
+				$('.cave-aimer-tile#' + newX + '-' + newY  + '').addClass('fail');
+				$('#cave-aimer-cover-result').addClass('fail');
+			}
+		}else{
+			$('#cave-aimer-cover-result').addClass('epicfail');
+		};
+		
 
 	});
 	$('.cave-task-button.generate').on('click', function(){
-		disableCaveElements();
-		 $('.spinner .tile').removeClass('active');
+		if(FREE_FOR_ACTION){
+			FREE_FOR_ACTION = false;
+			disableCaveElements();
+			 $('.spinner .tile').removeClass('active');
+			 $('#cave-aimer-cover-result').fadeOut(500);
+			 $('#cave-aimer-cover-result').removeClass('success');
+			 $('#cave-aimer-cover-result').removeClass('fail');
+			 $('#cave-aimer-cover-result').removeClass('epicfail');
 
-		var stepsCount = randomIntFromInterval(3, 6);
-		var currStep = 0;
-		var stepsInt;
-		var stepsNumbersInt;
-		stepsNumbersInt = setInterval(function(){
-			$('#cave-task-tail-number-left').html(randomIntFromInterval(5, 20));
-			setTimeout(function(){
-				$('#cave-task-tail-number-right').html(randomIntFromInterval(5, 20));
-			}, 50);
-		}, 100);  
-		stepsInt = setInterval(function(){
-			var leftTileNum = randomIntFromInterval(0,7);
-			var rightTileNum = randomIntFromInterval(0,7);
-			var currLeftTile = $('.spinner.left .tile.t' + leftTileNum);
-			var currRightTile = $('.spinner.right .tile.t' + rightTileNum);
-			currLeftTile.addClass('active');
-			
-			setTimeout(function(){
-				currRightTile.addClass('active');
-				if(currStep < stepsCount){
-					currStep++;
-					currLeftTile.removeClass('active');
-					setTimeout(function(){
-						currRightTile.removeClass('active');
-					}, 200);
-					}else{
-						clearInterval(stepsInt);
-						clearInterval(stepsNumbersInt);
-						enableCaveElements();
-					}
-			}, 200);
-		}, 300);
+			var stepsCount = randomIntFromInterval(3, 6);
+			var currStep = 0;
+			var stepsInt;
+			var stepsNumbersInt;
+			stepsNumbersInt = setInterval(function(){
+				$('#cave-task-tail-number-left').html(randomIntFromInterval(5, 20));
+				setTimeout(function(){
+					$('#cave-task-tail-number-right').html(randomIntFromInterval(5, 20));
+				}, 50);
+			}, 100);  
+			stepsInt = setInterval(function(){
+				var leftTileNum = randomIntFromInterval(0,7);
+				var rightTileNum = randomIntFromInterval(0,7);
+				var currLeftTile = $('.spinner.left .tile.t' + leftTileNum);
+				var currRightTile = $('.spinner.right .tile.t' + rightTileNum);
+				currLeftTile.addClass('active');				
+				setTimeout(function(){
+					currRightTile.addClass('active');
+					if(currStep < stepsCount){
+						currStep++;
+						currLeftTile.removeClass('active');
+						setTimeout(function(){
+							currRightTile.removeClass('active');
+						}, 200);
+						}else{
+							clearInterval(stepsInt);
+							clearInterval(stepsNumbersInt);
+							enableCaveElements();
+						}
+				}, 200);
+			}, 300);
+		}
 	});
 });
