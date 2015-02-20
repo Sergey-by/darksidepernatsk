@@ -16,7 +16,7 @@ var getPuzzle = function(i){}
 var generateTiles = function(){
 	
 	var aimerContent = "";
-	var epicFailDiv = '<div class="epicfail-result"><img src="../img/salt-cave/cave-result-epicfail-panda.gif"><span>EPIC FAIL!!!</span></div>';
+	var epicFailDiv = '<div class="epicfail-result"><img src="../img/salt-cave/cave-result-epicfail-panda.gif"><span>EPIC FAIL!!!</span><span>Кувалда улетела в неизвестном направлении!</span></div>';
 	var TEMP = '<div @ph-style></div>';
 	for(var i=0; i < 7; i++){
 		for(var j=0; j<7; j++){
@@ -26,7 +26,7 @@ var generateTiles = function(){
 			aimerContent += STR_MAIN;
 		}
 	}
-	aimerContent += '<div class="cover" id="cave-aimer-cover"></div><div class="cover cave-result" id="cave-aimer-cover-result"><div class="success-result"><span>SUCCESS</span></div><div class="fail-result"><span>FAIL!</span></div>' + epicFailDiv + '</div>';
+	aimerContent += '<div class="cover" id="cave-aimer-cover"></div><div class="cover cave-result" id="cave-aimer-cover-result"><div class="success-result"><span>Попадание! =)</span></div><div class="fail-result"><span>Мимо! =(</span></div>' + epicFailDiv + '</div>';
 	return aimerContent;
 }
 
